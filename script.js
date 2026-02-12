@@ -2,13 +2,24 @@ let revealIndex = 0;
 let totalSteps = 5;
 let likeCount = 0;
 let answeredCount = 0;
+let musicStarted = false;
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Start Intro
+// Function to start music and original logic after clicking the entry button
+function initExperience() {
+    document.getElementById("startOverlay").style.display = "none";
+    const music = document.getElementById("bgMusic");
+    if (music && !musicStarted) {
+        music.volume = 0.4;
+        music.play();
+        musicStarted = true;
+    }
+    // Start your original intro logic
     setTimeout(autoRevealSteps, 1000);
     createFloatingHearts();
+}
 
-    // Love Meter
+document.addEventListener("DOMContentLoaded", () => {
+    // Original Love Meter logic
     const loveMeter = document.getElementById("loveMeter");
     if (loveMeter) {
         loveMeter.addEventListener("input", (e) => {
@@ -22,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Marriage Form
+    // Original Marriage Form logic
     const form = document.getElementById("marriageForm");
     if (form) {
         form.addEventListener("submit", (e) => {
@@ -46,6 +57,12 @@ function autoRevealSteps() {
 }
 
 function handleReaction(button, liked) {
+    // Block progression if she selects No (💔)
+    if (!liked) {
+        alert("Only if you select ❤️ we will go forward... 💖");
+        return;
+    }
+
     const parent = button.parentElement;
     if (parent.classList.contains("answered")) return;
 
@@ -53,7 +70,7 @@ function handleReaction(button, liked) {
     parent.querySelectorAll("button").forEach(btn => btn.style.opacity = "0.3");
     button.style.opacity = "1";
 
-    if (liked) likeCount++;
+    likeCount++;
     answeredCount++;
 
     if (answeredCount === totalSteps) {
@@ -61,6 +78,8 @@ function handleReaction(button, liked) {
         const summary = document.getElementById("likeSummary");
         summary.classList.remove("hidden");
         summary.innerHTML = `You liked <b>${likeCount}/${totalSteps}</b> things about me 💖`;
+        // Hide warning sentence when finished
+        document.getElementById("mustSelectMsg").style.display = "none";
     }
 }
 
@@ -92,17 +111,13 @@ function finalEnding() { showOnly("finalEnding"); }
 function goToMedia() { showOnly("mediaSection"); }
 function goToValentine() { showOnly("valentineSection"); }
 
-// MEMORY MODAL LOGIC
 function openMemory(imageSrc, message) {
     const modal = document.getElementById("memoryModal");
     const modalImg = document.getElementById("modalImage");
     const modalMsg = document.getElementById("modalMessage");
-
     modalImg.src = imageSrc;
-    // Set objectFit via JS to be double sure
     modalImg.style.objectFit = "contain"; 
     modalMsg.innerText = message;
-
     modal.classList.remove("hidden");
     romanticBurst("✨");
 }
